@@ -1,0 +1,76 @@
+﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
+using DataAccess.Abstract;
+using Entities.Concrete;
+using Entities.DTOs;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Business.Concrete
+{
+    public class CarManager : ICarService
+    {
+        ICarDal _carDal;
+
+        public CarManager(ICarDal carDal)
+        {
+            _carDal = carDal;
+        }
+
+        public IResult Add(Car car)
+        {
+            // Koşullar, Kontroller...
+            if(car.CarDescription.Length >= 2 && car.DailyPrice > 0)
+            {
+                _carDal.Add(car);
+                return new SuccessResult(Messages.CarAdded);
+            }
+            else
+            {
+                return new ErrorResult(Messages.CarNameInvalid);
+            }
+
+        }
+
+        public IResult Delete(Car car)
+        {
+            // Koşullar, Kontroller...
+
+            _carDal.Delete(car);
+            return new SuccessResult(Messages.CarDeleted);
+        }
+
+        public IDataResult<List<Car>> GetAll()
+        {
+            // Koşullar, Kontroller...
+
+           return  new SuccessDataResult<List<Car>>(_carDal.GetAll());
+        }
+
+        public IDataResult<List<CarDetailDto>> GetCarDetails()
+        {
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails());
+        }
+
+        public IDataResult<List<Car>> GetCarsByBrandId(int id)
+        {
+            //İş Kodları
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.BrandId == id));
+        }
+
+        public IDataResult<List<Car>> GetCarsByColorId(int id)
+        {
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(p => p.ColorId == id));
+        }
+
+        public IResult Update(Car car)
+        {
+            // Koşullar, Kontroller...
+
+            _carDal.Update(car);
+            return new SuccessResult(Messages.CarUpdated);
+        }
+    }
+}
